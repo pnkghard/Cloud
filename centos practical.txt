@@ -1,0 +1,51 @@
+vi /etc/sysconfig/network-script/ifcfg-ens33
+
+
+
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=no
+NAME=ens33
+UUID=161ec7be-0365-41e5-856d-cbe91dbf4c27
+DEVICE=ens33
+ONBOOT=yes
+IPADDR=192.168.93.10
+PREFIX=24
+GATEWAY=192.168.93.2
+DNS3=8.8.8.8
+DNS2=8.8.4.4
+DNS1=192.168.93.2
+
+
+Step 1: Before Installation:
+	- setup static IP address with default gateway and public DNS
+	- network should be able to ping to internet
+
+Step 2: Disable network manager, firewall and selinux
+# systemctl stop NetworkManager.service 
+# systemctl disable NetworkManager.service 
+# systemctl restart network
+# systemctl stop firewalld 
+# systemctl disable firewalld
+# setenforce 0
+# sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config
+
+Step 3: set valid hostname
+# hostnamectl set-hostname openstackcloud.example.com --static
+
+Step 4: update system packages
+# yum -y update
+# yum -y install vim wget curl telnet bash-completion
+
+Step 5: install OpenStack Train
+# yum install -y centos-release-openstack-train
+
+Step 6: install packstack
+# yum install -y openstack-packstack
+
+Step 7: run packstack
+# packstack --allinone
